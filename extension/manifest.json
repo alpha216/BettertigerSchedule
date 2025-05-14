@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+  "name": "TigerSchedule RMP Ratings",
+  "version": "1.0",
+  "description": "Appends RateMyProfessor ratings to instructor names on TigerSchedule",
+    "permissions": ["scripting", "activeTab"],
+    "host_permissions": ["https://tigerschedule.auburn.edu/*", "https://api.ratemyprofessors.com/*"],
+    "content_scripts": [
+      {
+        "matches": ["https://tigerschedule.auburn.edu/*"],
+        "js": ["app.js"],
+        "run_at": "document_idle"
+      }
+    ],
+    "action": {
+      "default_title": "Better Tiger Scheduler"
+    }
+}
