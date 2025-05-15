@@ -9,12 +9,18 @@ const GQL_QUERY = `query NewSearchTeachersQuery(
       edges {
         node {
           id
+          legacyId
           avgRating
           avgDifficulty
+          wouldTakeAgainPercent
           firstName
           lastName
           department
           departmentId
+          courseCodes {
+            courseCount
+            courseName
+          }
         }
       }
     }
@@ -28,19 +34,15 @@ async function fetchProfessorDataFromAPI(profName) {
       text: profName,
       schoolID: "U2Nob29sLTYw" // Auburn University의 RMP 학교 ID
     },
-    count: 1, // 가장 일치하는 교수 1명 정보만 가져오기
+    count: 3, // 가장 일치하는 교수 1명 정보만 가져오기
     includeCompare: true
   };
 
   try {
-    // 참고: RateMyProfessors API는 가끔 'Authorization' 헤더를 요구할 수 있어.
-    // 만약 요청이 계속 실패하면 (예: 401, 403 오류), 이 부분을 확인해야 할 수도 있어.
-    // 현재는 공식적인 공개 API 토큰 발급 방법이 명확하지 않아서 일단 없이 시도해볼게.
     const response = await fetch('https://api.ratemyprofessors.com/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': 'Basic YOUR_BASE64_ENCODED_TOKEN' // 필요하다면 여기에 토큰 추가
       },
       body: JSON.stringify({ query: GQL_QUERY, variables })
     });
@@ -63,7 +65,7 @@ async function fetchProfessorDataFromAPI(profName) {
       console.log(`No RMP data found for "${profName}"`);
       return null;
     }
-    return edges[0].node;
+    return edges;
   } catch (error) {
     console.error('Error fetching RMP data in background for', profName, ':', error);
     throw error; // 에러를 다시 던져서 메시지 핸들러에서 잡도록 함
@@ -79,6 +81,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .catch(error => {
         sendResponse({ success: false, error: error.message });
       });
-    return true; // 비동기적으로 응답을 보낼 것임을 알림
+    return true; 
   }
 });
