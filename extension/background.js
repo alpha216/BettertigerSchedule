@@ -34,7 +34,7 @@ async function fetchProfessorDataFromAPI(profName) {
       text: profName,
       schoolID: "U2Nob29sLTYw" // Auburn University의 RMP 학교 ID
     },
-    count: 3, // 가장 일치하는 교수 1명 정보만 가져오기
+    count: 3, // Get 3 professors info
     includeCompare: true
   };
 
